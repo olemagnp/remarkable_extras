@@ -1,0 +1,66 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{geometry}
+\usepackage{tikz}
+
+\usetikzlibrary{calc, positioning}
+
+\geometry{
+    papersize={6.18in, 8.24in},
+    margin=0pt,
+    layoutoffset=0pt,
+    scale=1,
+    ignoreall,
+}
+
+\begin{document}
+    \begin{tikzpicture}[overlay, remember picture, node distance=3mm, every node/.style = {
+        font=\large
+    }]
+        \node (root) at (current page.north west) {};
+        \node[below=7mm of root.south west, anchor=west] (enere) {Enere};
+        \node[below=of enere.south west, anchor=west] (toere) {Toere};
+        \node[below=of toere.south west, anchor=west] (treere) {Treere};
+        \node[below=of treere.south west, anchor=west] (firere) {Firere};
+        \node[below=of firere.south west, anchor=west] (femere) {Femere};
+        \node[below=of femere.south west, anchor=west] (seksere) {Seksere};
+        \node[below=of seksere.south west, anchor=west, font=\large\bfseries] (sum) {Sum};
+        \node[below=of sum.south west, anchor=west, font=\large\bfseries] (bonus) {Bonus};
+        \node[below=of bonus.south west, anchor=west] (ettpar) {Ett par};
+        \node[below=of ettpar.south west, anchor=west] (topar) {To par};
+        \node[below=of topar.south west, anchor=west] (trepar) {Tre par};
+        \node[below=of trepar.south west, anchor=west] (trelike) {Tre like};
+        \node[below=of trelike.south west, anchor=west] (firelike) {Fire like};
+        \node[below=of firelike.south west, anchor=west] (femlike) {Fem like};
+        \node[below=of femlike.south west, anchor=west] (litenstraight) {Liten straight};
+        \node[below=of litenstraight.south west, anchor=west] (storstraight) {Stor straight};
+        \node[below=of storstraight.south west, anchor=west] (fullstraight) {Full straight};
+        \node[below=of fullstraight.south west, anchor=west] (hytte) {Hytte (2+3)};
+        \node[below=of hytte.south west, anchor=west] (hus) {Hus (3+3)};
+        \node[below=of hus.south west, anchor=west] (tarn) {Tårn (2+4)};
+        \node[below=of tarn.south west, anchor=west] (sjanse) {Sjanse};
+        \node[below=of sjanse.south west, anchor=west] (yatzy) {Yatzy};
+        \node[below=of yatzy.south west, anchor=west, font=\large\bfseries] (totalsum) {Totalsum};
+
+
+        \foreach\x in {toere,treere,firere,femere,seksere,topar,trepar,trelike,firelike,femlike,litenstraight,storstraight,fullstraight,hytte,hus,tarn,sjanse,yatzy}{
+            \draw (\x.north west) -- ++(\paperwidth+5pt, 0);
+        }
+
+        \draw[thick] (bonus.north west) -- ++(\paperwidth+5pt, 0);
+
+        \foreach\x in {enere, sum,ettpar,totalsum}{
+            \draw[very thick] (\x.north west) -- ++(\paperwidth+5pt, 0);
+        }
+
+        \draw[very thick] (totalsum.south west) -- ++(\paperwidth+5pt, 0);
+
+        \draw[thick] ($(root.north west) + (3cm, 0)$) -- ($(totalsum.south west) + (3cm, 0)$);
+
+        \foreach\i in {1,2,...,8}{
+            \draw ($(root.north west) + (3cm+\i*1.4cm, 0)$) -- ($(totalsum.south west) + (3cm+\i*1.4cm, 0)$);
+        }
+
+    \end{tikzpicture}
+\end{document}

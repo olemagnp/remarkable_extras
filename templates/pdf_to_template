@@ -1,0 +1,3 @@
+#!/usr/bin/bash
+
+convert $1.pdf -resize '1404x1872!' $1.png
