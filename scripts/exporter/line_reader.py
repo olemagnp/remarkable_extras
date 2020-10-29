@@ -69,7 +69,7 @@ class RMPoint:
         [self.x] = struct.unpack('<f', f.read(4))
         [self.y] = struct.unpack('<f', f.read(4))
         [self.speed] = struct.unpack('<f', f.read(4))
-        [self.direction] = struct.unpack('<f', f.read(4))
+        [self.direction] = struct.unpack('<f', f.read(4)) # Direction in radians
         [self.width] = struct.unpack('<f', f.read(4))
         [self.pressure] = struct.unpack('<f', f.read(4))
 
@@ -78,9 +78,3 @@ class RMPoint:
 if __name__ == "__main__":
     doc = RMDocument('sample_files/CalligraphyTest',
                      'a4e0a733-41d6-4f1a-b5eb-c6c066be990b')
-
-    page = doc.pages[0]
-    layer = page.layers[0]
-    stroke = layer.strokes[0]
-
-    print(stroke.n_points)
