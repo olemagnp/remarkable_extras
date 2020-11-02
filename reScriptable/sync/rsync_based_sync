@@ -1,0 +1,20 @@
+#!/usr/bin/bash
+
+host="remarkable_work"
+remote_dir="/home/root/.local/share/remarkable/xochitl"
+local_dir="/home/ole-magnus/Documents/RemarkableBackup/.raw"
+datetime="$(date '+%y-%m-%d_%H:%M:%S')"
+
+backup_path="${local_dir}/${datetime}"
+latest_link="${local_dir}/latest"
+
+mkdir -p "${backup_path}"
+
+rsync -avp --delete \
+    "${host}:${remote_dir}/" \
+    --link-dest "${latest_link}" \
+    --exclude=".cache" \
+    "${backup_path}"
+
+rm -rf "${latest_link}"
+ln -s "${backup_path}" "${latest_link}"
