@@ -579,3 +579,5 @@ dmypy.json
 out
 output
 sample_files
+
+config.json

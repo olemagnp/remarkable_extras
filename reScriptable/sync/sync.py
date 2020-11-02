@@ -11,15 +11,20 @@ def sync(host, remote_dir, local_dir):
 
     os.makedirs(backup_path)
 
-    subprocess.run([
+    res = subprocess.run([
         "/usr/bin/rsync",
         "-avp",
+        "--timeout",
+        "10",
         "--delete",
         f"{host}:{remote_dir}",
         "--link-dest", latest_link,
         "--exclude", ".cache",
         backup_path
     ])
+
+    if res.returncode != 0:
+        raise OSError(f"Sync returned code: {res.returncode}")
 
     if os.path.exists(latest_link):
         os.remove(latest_link)
