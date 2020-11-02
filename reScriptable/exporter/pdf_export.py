@@ -13,6 +13,7 @@ class RMToPDF:
         self.doc = doc
 
     def write(self, out):
+        os.makedirs(os.path.dirname(out), exist_ok=True)
         n_pages = self.doc.content_data['pageCount']
         bg = self.doc.pdf
 

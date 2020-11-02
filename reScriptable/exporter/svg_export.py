@@ -100,7 +100,7 @@ class RMPen:
             print(f"Unknown pen type: {self.kind}")
 
     def draw_single(self, points: Iterable[Tuple[float, float]], color: Text, width: float, opacity: float):
-        points = " ".join([f"{int(p[0])},{int(p[1])}" for p in points])
+        points = " ".join([f"{round(p[0])},{round(p[1])}" for p in points])
         self.output.write(f'<polyline points="{points}" style="fill:none;stroke:{color};stroke-width:{width};opacity:{opacity}" />\n')
 
     def draw_combined(self, points: Iterable[Tuple[float, float, float, float, Text]],eps: float = 1e-8):
@@ -114,7 +114,7 @@ class RMPen:
             last_p = points[i]
             next_p = points[i+2]
             w = sum([last_p[2], p[2], next_p[2]]) / 3.
-            self.output.write(f'<polyline points="{int(last_p[0])},{int(last_p[1])} {int(p[0])},{int(p[1])} {int(next_p[0])},{int(next_p[1])}" style="fill:none;stroke:{p[4]};stroke-width:{w};opacity:{p[3]}" />')
+            self.output.write(f'<polyline points="{round(last_p[0])},{round(last_p[1])} {round(p[0])},{round(p[1])} {round(next_p[0])},{round(next_p[1])}" style="fill:none;stroke:{p[4]};stroke-width:{w};opacity:{p[3]}" />')
             last_p = p
 
 
