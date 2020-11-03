@@ -117,6 +117,63 @@ class RMPen:
             self.output.write(f'<polyline points="{round(last_p[0])},{round(last_p[1])} {round(p[0])},{round(p[1])} {round(next_p[0])},{round(next_p[1])}" style="fill:none;stroke:{p[4]};stroke-width:{w};opacity:{p[3]}" />')
             last_p = p
 
+    def side_of_line(self, lineA, lineB, p):
+        return ((lineB[0] - lineA[0]) * (p[1] - lineA[1]) - (lineB[1] - lineA[1]) * (p[0] - lineA[0])) >= 0
+
+    def draw_combined2(self, points: Iterable[Tuple[float, float, float, float, Text]], eps: float = 1e-8, min_dist_sq: float = 2.5):
+        last_point = points[0]
+        last_p1 = None
+        last_p2 = None
+
+        for i, p in enumerate(points[1:-1]):
+            if (last_point[0] - p[0]) ** 2 + (last_point[1] - p[1]) ** 2 < min_dist_sq:
+                continue
+            next_point = points[i+2]
+
+            m1 = (p[1] - last_point[1]) / (p[0] - last_point[0] + eps)
+            m2 = (next_point[1] - p[1]) / (next_point[0] - p[0] + eps)
+
+            tanA = (m2 - m1) / (1 + m1 * m2 + eps)
+
+            alpha_1 = math.atan(m1)
+            alpha = math.atan(tanA)
+
+            midpoint = alpha_1 + .5 * alpha
+
+            dx = p[2] * math.cos(midpoint)
+            dy = p[2] * math.sin(midpoint)
+
+            p1 = (p[0] + dx, p[1] + dy)
+            p2 = (p[0] - dx, p[1] - dy)
+
+            if last_p1 is None:
+                last_p1 = last_point[0] + dx, last_point[1] + dy
+                last_p2 = last_point[0] - dx, last_point[1] - dy
+
+            order = [last_p1, p1, p2, last_p2]
+            nums = [1, 2, 3, 4]
+
+            if self.side_of_line(last_point, p, order[0]) != self.side_of_line(last_point, p, order[1]):
+                order[1:3] = order[1:3][::-1]
+                nums[1:3] = nums[1:3][::-1]
+
+            if self.side_of_line(last_point, p, order[1]) != self.side_of_line(last_point, p, order[2]):
+                order[2:] = order[2:][::-1]
+                nums[2:] = nums[2:][::-1]
+            # print(nums)
+
+            colors = ['red', 'green', 'blue', 'yellow', 'purple', 'orange', 'darksalmon']
+            self.output.write(f'<polygon points="')
+            self.output.write(" ".join([f'{round(c[0])},{round(c[1])}' for c in order]))
+            # self.output.write(f'" style="fill:{p[4]};stroke:none;opacity:{p[3]}" />\n')
+            self.output.write(f'" style="fill:{p[4]};stroke:{colors[i % len(colors)]};opacity:{p[3]}" />\n')
+            # for j, c in enumerate(order):
+            #     self.output.write(f'<circle cx="{round(c[0])}" cy="{round(c[1])}" r="1" fill="{colors[j]}" />\n')
+            last_p1, last_p2, last_point = p1, p2, p
+            # if i >= 1:
+            #     print(i)
+            #     return
+
 
 class RMToSVG:
     def __init__(self, doc: RMDocument, width: int = 1404, height: int = 1872):
@@ -177,4 +234,4 @@ def to_svg(path, name, out_name=None):
     svg.write(out_name)
 
 if __name__ == "__main__":
-    to_svg('sample_files/CalligraphyTest', 'a4e0a733-41d6-4f1a-b5eb-c6c066be990b', 'out/test')
+    to_svg('/home/ole-magnus/Documents/RemarkableBackup/.raw/latest/xochitl/', '2746c0ac-8c66-4241-8fbe-4c8bfb8ece7b', 'out/test')

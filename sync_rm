@@ -24,6 +24,9 @@ parser.add_argument(
     '--no-sync', help="Do not sync with remarkable. Only update the local nice folder.", action='store_true')
 parser.add_argument(
     '--no-nice', help="Do not nicify the documents. Only sync with the remarkable.", action='store_true')
+parser.add_argument(
+    '--force', help="Force the update of the nice directory", action="store_true"
+)
 
 args = parser.parse_args()
 sys.path.append(args.p)
@@ -64,5 +67,6 @@ local_nice = args.local_nice if args.local_nice is not None else conf['local_nic
 
 if not args.no_sync:
     sync.sync(host, remote_dir, local_raw)
-direc = rm_to_dir.RMDirectory(os.path.join(local_raw, 'latest', 'xochitl'))
-direc.to_readable(local_nice)
+if not args.no_nice:
+    direc = rm_to_dir.RMDirectory(os.path.join(local_raw, 'latest', 'xochitl'))
+    direc.to_readable(local_nice, only_update=not args.force)
