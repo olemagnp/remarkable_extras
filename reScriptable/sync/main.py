@@ -12,7 +12,7 @@ if __name__ == "__main__":
     with open(conf_path) as f:
         config = json.loads(f.read())
 
-    sync(config['host'], config['remote_dir'], config['local_raw_dir'])
+    sync(config['host'], config['remote_dir'], config['local_raw'])
 
-    direc = RMDirectory(os.path.join(config['local_raw_dir'], 'latest', 'xochitl'))
-    direc.to_readable(config['local_nice_dir'])
+    direc = RMDirectory(os.path.join(config['local_raw'], 'latest', 'xochitl'))
+    direc.to_readable(config['local_nice'])

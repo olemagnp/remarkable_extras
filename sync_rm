@@ -1,0 +1,68 @@
+#!/usr/bin/python
+
+from reScriptable.sync import sync, rm_to_dir
+import argparse
+import os
+import sys
+import json
+
+parser = argparse.ArgumentParser()
+
+parser.add_argument('-p', help="Path to directory containing reScriptable",
+                    default=os.path.dirname(os.path.abspath(os.path.realpath(__file__))))
+parser.add_argument(
+    '-c', '--config', help="Path to config file, defaults to <reScriptable>/sync/config.json")
+parser.add_argument(
+    '-H', '--host', help="Host to connect to, default from config file")
+parser.add_argument('-r', '--remote_dir',
+                    help="Directory on the remarkable to sync, default from config file")
+parser.add_argument('-l', '--local_raw',
+                    help="Directory to store raw backups at, default from config file")
+parser.add_argument('-L', '--local_nice',
+                    help="Directory to store nice backups at, default from config file")
+parser.add_argument(
+    '--no-sync', help="Do not sync with remarkable. Only update the local nice folder.", action='store_true')
+parser.add_argument(
+    '--no-nice', help="Do not nicify the documents. Only sync with the remarkable.", action='store_true')
+
+args = parser.parse_args()
+sys.path.append(args.p)
+
+conf_path = args.config if args.config is not None else os.path.join(
+    args.p, "reScriptable", "sync", "config.json")
+
+sufficient_data = os.path.exists(conf_path)
+sufficient_data = sufficient_data or (
+    args.no_sync \
+    and args.local_raw is not None \
+    and args.local_nice is not None \
+)
+sufficient_data = sufficient_data or (
+    args.no_nice \
+    and args.host is not None \
+    and args.remote_dir is not None \
+    and args.local_raw is not None \
+)
+sufficient_data = sufficient_data or (
+    args.host is not None \
+    and args.remote_dir is not None \
+    and args.local_raw is not None \
+    and args.local_nice is not None \
+)
+
+if not sufficient_data:
+    raise ValueError(
+        "Missing conf file, and not all configuration params given as command line args")
+
+with open(conf_path) as f:
+    conf = json.loads(f.read())
+
+host = args.host if args.host is not None else conf['host']
+remote_dir = args.remote_dir if args.remote_dir is not None else conf['remote_dir']
+local_raw = args.local_raw if args.local_raw is not None else conf['local_raw']
+local_nice = args.local_nice if args.local_nice is not None else conf['local_nice']
+
+if not args.no_sync:
+    sync.sync(host, remote_dir, local_raw)
+direc = rm_to_dir.RMDirectory(os.path.join(local_raw, 'latest', 'xochitl'))
+direc.to_readable(local_nice)

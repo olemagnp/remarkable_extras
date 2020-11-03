@@ -4,7 +4,8 @@ import json
 
 from glob import glob
 
-from ..exporter import RMToPDF, RMDocument
+from ..exporter.pdf_export import RMToPDF
+from ..exporter.line_reader import RMDocument
 
 
 class RMFileTypes:
@@ -43,7 +44,7 @@ class RMDirectory:
 
         self.rmfiles = {'trash': trash}
 
-        self.structure = {'trash': {}}
+        self.structure = {}
 
         for p in paths:
             uuid = p.rsplit("/")[-1].rsplit(".")[0]
@@ -59,6 +60,8 @@ class RMDirectory:
         elems = list(self.rmfiles.values())
         while elems:
             cur_elem = elems.pop(0)
+            if cur_elem == trash:
+                continue
             if cur_elem.parent is None:
                 uuid = cur_elem.uuid
                 if cur_elem.type == RMFileTypes.FOLDER:
@@ -74,6 +77,9 @@ class RMDirectory:
                 while cur_folder.parent is not None:
                     cur_folder = self.rmfiles[cur_folder.parent]
                     placement.append(cur_folder)
+
+                if cur_folder == trash:
+                    continue
 
                 structure_choice = self.structure
                 for par in placement[::-1]:
@@ -137,7 +143,8 @@ class RMDirectory:
 
 
 if __name__ == "__main__":
-    path = '/home/ole-magnus/Documents/RemarkableBackup/latest'
+    path = '/home/ole-magnus/Documents/RemarkableBackup/.raw/latest/xochitl'
 
     direc = RMDirectory(path)
-    direc.to_readable()
+    direc.print_structure()
+    # direc.to_readable('/home/ole-magnus/Documents/RemarkableBackup/content')
